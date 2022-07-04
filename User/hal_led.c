@@ -1,5 +1,5 @@
 /********************************************************
-* @file       main.c
+* @file       hal_led.c
 * @author     szhj13
 * @version    V1.0
 * @date       2022-06-06
@@ -10,28 +10,36 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#include "drv_task.h"
-#include "drv_timer.h"
-
-#include "app_led.h"
+#include "hal_led.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
 
-int main(void )
+void Hal_Led_Init(PORT_TypeDef port, PIN_TypeDef pin )
 {
-    Drv_Task_Init();
-
-    Drv_Timer_Init();
-
-    App_Led_Init();
-    
-	while(1)
-	{
-        Drv_Task_Scheduler();
-	}
-	
+    PORT_Init(port, pin, OUTPUT);
 }
 
+void Hal_Led_On(PORT_TypeDef port, PIN_TypeDef pin )
+{
+    PORT_SetBit(port, pin);
+}
+
+void Hal_Led_Off(PORT_TypeDef port, PIN_TypeDef pin )
+{
+    PORT_ClrBit(port, pin);
+}
+
+uint8_t Hal_Led_Get_State(PORT_TypeDef port, PIN_TypeDef pin )
+{
+    if(PORT_GetBit(port, pin))
+    {
+        return LED_OFF;
+    }
+    else
+    {
+        return LED_ON;
+    }
+}
