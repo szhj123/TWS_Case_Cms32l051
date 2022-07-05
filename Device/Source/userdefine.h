@@ -383,6 +383,7 @@ typedef enum
   */
 
 /* ToDo: Please comment out the following unused ANIx setting according to your application needs. */
+#if 0
 #define ADC_PORT_SETTING() do{ \
         PORT->PMC2 |= (1 << 0);   /* Set ANI0(P20) pin: It is necessary for ADC_VREF_AVREFP_AVREFM, used as AVREFP */ \
         PORT->PMC2 |= (1 << 1);   /* Set ANI1(P21) pin: It is necessary for ADC_VREF_AVREFP_AVREFM, used as AVREFM */ \
@@ -422,7 +423,13 @@ typedef enum
         PORT->PMC13|= (1 << 0);   /* Set ANI35(P130) pin */ \
         PORT->PMC13|= (1 << 6);   /* Set ANI36(P136) pin */ \
 }while(0)
+#else
+#define ADC_PORT_SETTING() do{ \
+        PORT->PMC2 |= (1 << 0);   /* Set ANI0(P20) pin: It is necessary for ADC_VREF_AVREFP_AVREFM, used as AVREFP */ \
+        PORT->PMC2 |= (1 << 2);   /* Set ANI2(P22) pin */ \
+}while(0)
 
+#endif 
 /* ================================================================================================================== */
 /* ================                                        CMP                                       ================ */
 /* ================================================================================================================== */
@@ -1245,18 +1252,36 @@ typedef enum
   * @brief INTP Port Setting 
   */
 /* ToDo: You can allocate the INTP0 to any desired pins with INTP0PCFG register */
+#if 0
 #define INTP0_PORT_SETTING() do{ \
         PORT->INTP0PCFG = 0x29;     /* allocate INTP0 to P136 */ \
         PORT->PM13  |=  (1 << 6);   /* P136 is used as INTP0 input */ \
         PORT->PMC13 &= ~(1 << 6);   /* P136 digital function */ \
 }while(0)
+#else
+#define INTP0_PORT_SETTING() do{ \
+        PORT->INTP0PCFG = 0x0e;     /* allocate INTP0 to P23 */ \
+        PORT->PM2  |=  (1 << 3);   /* P23 is used as INTP0 input */ \
+        PORT->PMC2 &= ~(1 << 3);   /* P23 digital function */ \
+}while(0)
+
+#endif 
 
 /* ToDo: You can allocate the INTP1 to any desired pins with INTP1PCFG register */
+#if 0
 #define INTP1_PORT_SETTING() do{ \
         PORT->INTP1PCFG = 0x17;     /* allocate INTP1 to P50 */ \
         PORT->PM5  |=  (1 << 0);    /* P50 is used as INTP1 input */ \
         PORT->PMC5 &= ~(1 << 0);    /* P50 digital function */ \
 }while(0)
+#else
+#define INTP1_PORT_SETTING() do{ \
+        PORT->INTP1PCFG = 0x25;     /* allocate INTP1 to P121 */ \
+        PORT->PM12  |=  (1 << 1);    /* P50 is used as INTP1 input */ \
+        PORT->PMC12 &= ~(1 << 1);    /* P50 digital function */ \
+}while(0)
+
+#endif 
 
 /* ToDo: You can allocate the INTP2 to any desired pins with INTP2PCFG register */
 #define INTP2_PORT_SETTING() do{ \

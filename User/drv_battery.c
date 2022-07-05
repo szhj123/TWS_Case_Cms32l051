@@ -1,5 +1,5 @@
 /********************************************************
-* @file       main.c
+* @file       drv_battery.c
 * @author     szhj13
 * @version    V1.0
 * @date       2022-06-06
@@ -10,31 +10,39 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#include "drv_task.h"
-#include "drv_timer.h"
-
-#include "app_battery.h"
-#include "app_led.h"
+#include "drv_battery.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
+#define INTER_REF_VOL                1450u//mv
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
 
-int main(void )
+static uint16_t refVolBuf[8];
+
+void Drv_Batt_Init(void )
 {
-    Drv_Task_Init();
-
-    Drv_Timer_Init();
-
-    App_Batt_Init();
-
-    App_Led_Init();
+    uint8_t i;
     
-	while(1)
-	{
-        Drv_Task_Scheduler();
-	}
-	
+    Hal_Batt_Init();
+
+    for(i=0;i<8;i++)
+    {
+        refVolBuf[i] = Drv_Batt_Get_BatVol();
+    }
+}
+
+uint16_t Drv_Batt_Get_BatVol(void )
+{
+    uint16_t batVol;
+    
+    batVol = (INTER_REF_VOL * 4096) / Hal_Batt_Get_AdcVal(ADC_INTERREFVOLT);
+
+    return batVol;
+}
+
+uint16_t Drv_Batt_Get_NtcVol(void )
+{
+    
 }
 

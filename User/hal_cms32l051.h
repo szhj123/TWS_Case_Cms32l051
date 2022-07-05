@@ -7,6 +7,8 @@
 #include "userdefine.h"
 #include "clk.h"
 #include "gpio.h"
+#include "adc.h"
+#include "intp.h"
 
 typedef void (*hal_irq_handler_callback_t)(void );
 

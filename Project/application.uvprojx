@@ -413,40 +413,25 @@
               <FileType>1</FileType>
               <FilePath>..\Driver\src\gpio.c</FilePath>
             </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\src\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>intp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\src\intp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>User</GroupName>
+          <GroupName>App</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>app_battery.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\drv_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\hal_interrupt.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\hal_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\drv_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\hal_timer.c</FilePath>
+              <FilePath>..\User\app_battery.c</FilePath>
             </File>
             <File>
               <FileName>app_led.c</FileName>
@@ -454,14 +439,64 @@
               <FilePath>..\User\app_led.c</FilePath>
             </File>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\main.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drv</GroupName>
+          <Files>
+            <File>
+              <FileName>drv_battery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\drv_battery.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\drv_led.c</FilePath>
             </File>
             <File>
+              <FileName>drv_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\drv_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\drv_timer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Hal</GroupName>
+          <Files>
+            <File>
+              <FileName>hal_battery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\hal_battery.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\hal_interrupt.c</FilePath>
+            </File>
+            <File>
               <FileName>hal_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\hal_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\hal_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\hal_timer.c</FilePath>
             </File>
           </Files>
         </Group>

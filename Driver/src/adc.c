@@ -16,7 +16,6 @@ Macro definitions
 #define ADC_TRIGGER_SOFTWARE    /* ADC Trigger: software trigger */
 #define ADC_CONVMODE_ONESHOT    /* ADC Conversion mode: one-shot */
 #define ADC_VREF_VDD_VSS        /* ADC reference voltage: VDD/VSS */
-
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
@@ -55,7 +54,7 @@ void ADC_Init(void)
     ADC_PORT_SETTING();
 
     /* AD operation mode: select or scan mode  */
-    ADC->ADM0 = _10_AD_CONVERSION_CLOCK_8 | _00_AD_COMPARATOR_DISABLE;
+    ADC->ADM0 = _08_AD_CONVERSION_CLOCK_16 | _00_AD_COMPARATOR_DISABLE;
     //ADC->ADM0 = _28_AD_CONVERSION_CLOCK_1 | _00_AD_COMPARATOR_DISABLE;
 
     /* AD conversion mode setting */

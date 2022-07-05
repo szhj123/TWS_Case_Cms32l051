@@ -16,6 +16,7 @@ typedef struct _led_ctrl_block_t
 {
     PORT_TypeDef port;
     PIN_TypeDef  pin;
+    led_flash_t  ledFlash;
     uint16_t     ledOnTime;
     uint16_t     ledOffTime;
     uint16_t     ledDelayCnt;
