@@ -3,9 +3,6 @@
 
 #include "hal_cms32l051.h"
 
-#define USB_PLUG_OUT                 0
-#define USB_PLUG_IN                  (!USB_PLUG_OUT)
-
 void Hal_Batt_Init(void );
 void Hal_Batt_Ntc_PwrOn(void );
 void Hal_Batt_Ntc_PwrOff(void );

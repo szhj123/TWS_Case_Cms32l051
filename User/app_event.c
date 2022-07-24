@@ -1,5 +1,5 @@
 /********************************************************
-* @file       drv_battery.c
+* @file       app_event.c
 * @author     szhj13
 * @version    V1.0
 * @date       2022-06-06
@@ -10,45 +10,33 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#include "drv_battery.h"
+#define "drv_task.h"
+
+#include "app_event.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
-#define INTER_REF_VOL                1450u//mv
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
+static void App_Event_Handler(void *arg );
 /* Private variables ------------------------------------*/
 
-static uint16_t refVolBuf[8];
-
-void Drv_Batt_Init(void )
+void App_Event_Init(void )
 {
-    uint8_t i;
-    
-    Hal_Batt_Init();
+   Drv_Msg_Init();
 
-    for(i=0;i<8;i++)
+   Drv_Task_Regist_Period(App_Event_Handler, 0, 1, NULL);
+}
+
+static void App_Event_Handler(void *arg )
+{
+    static msg_t msg;
+
+    if(Drv_Msg_Get(&msg) == MSG_OK)
     {
-        refVolBuf[i] = Drv_Batt_Get_BatVol();
+        switch(msg.cmd)
+        {
+            default: break;
+        }
     }
-}
-
-uint8_t Drv_Batt_Get_Usb_State(void )
-{
-    return Hal_Batt_Get_Usb_State();
-    
-}
-
-uint16_t Drv_Batt_Get_BatVol(void )
-{
-    uint16_t batVol;
-    
-    batVol = (INTER_REF_VOL * 4096) / Hal_Batt_Get_AdcVal(ADC_INTERREFVOLT);
-
-    return batVol;
-}
-
-uint16_t Drv_Batt_Get_NtcVol(void )
-{
-    
 }
 

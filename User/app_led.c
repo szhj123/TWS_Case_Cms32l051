@@ -65,9 +65,16 @@ app_led_flash_callback_t app_led_flash_callback = NULL;
 void App_Led_Init(void )
 {
     Drv_Led_Init(&battLed1);
+    Drv_Led_Off(&battLed1);
+    
     Drv_Led_Init(&battLed2);
+    Drv_Led_Off(&battLed2);
+    
     Drv_Led_Init(&battLed3);
+    Drv_Led_Off(&battLed3);
+    
     Drv_Led_Init(&battLed4);
+    Drv_Led_Off(&battLed4);
 
     Drv_Timer_Regist_Period(App_Led_Handler, 0, 1, NULL);
 }
@@ -81,6 +88,11 @@ static void App_Led_Handler(void *arg )
 }
 
 void App_Led_Charging(void )
+{
+    
+}
+
+void App_Led_Discharging(void )
 {
     
 }

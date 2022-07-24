@@ -58,14 +58,7 @@ void Hal_Batt_Boost_Disable(void )
 
 uint8_t Hal_Batt_Get_Usb_State(void )
 {
-    if(PORT_GetBit(PORT12, PIN2))
-    {
-        return USB_PLUG_IN;
-    }
-    else
-    {
-        return USB_PLUG_OUT;
-    }
+    return PORT_GetBit(PORT12, PIN2);
 }
 
 uint16_t Hal_Batt_Get_AdcVal(adc_channel_t adcChannel)
