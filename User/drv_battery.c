@@ -52,3 +52,12 @@ uint16_t Drv_Batt_Get_NtcVol(void )
     
 }
 
+void Drv_Batt_Boost_Enable(void )
+{
+    Hal_Batt_Boost_Enable();
+}
+
+void Drv_Batt_Boost_Disable(void )
+{
+    Hal_Batt_Boost_Disable();
+}
