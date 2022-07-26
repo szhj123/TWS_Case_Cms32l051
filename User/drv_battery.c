@@ -18,18 +18,9 @@
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
 
-static uint16_t refVolBuf[8];
-
 void Drv_Batt_Init(void )
 {
-    uint8_t i;
-    
     Hal_Batt_Init();
-
-    for(i=0;i<8;i++)
-    {
-        refVolBuf[i] = Drv_Batt_Get_BatVol();
-    }
 }
 
 uint8_t Drv_Batt_Get_Usb_State(void )
@@ -49,7 +40,24 @@ uint16_t Drv_Batt_Get_BatVol(void )
 
 uint16_t Drv_Batt_Get_NtcVol(void )
 {
+    uint16_t ntcVol;
     
+    Hal_Batt_Ntc_PwrOn();
+
+    ntcVol = (INTER_REF_VOL * Hal_Batt_Get_AdcVal(ADC_CHANNEL_2)) / Hal_Batt_Get_AdcVal(ADC_INTERREFVOLT);
+	
+    return ntcVol;
+}
+
+uint16_t Drv_Battery_Get_EarbudCur(void )
+{
+    uint16_t earbudCur;
+    
+    Hal_Batt_Earbud_Charging_Enable();
+
+    earbudCur = (INTER_REF_VOL * Hal_Batt_Get_AdcVal(ADC_CHANNEL_0)) / Hal_Batt_Get_AdcVal(ADC_INTERREFVOLT);
+	
+    return earbudCur;
 }
 
 void Drv_Batt_Boost_Enable(void )

@@ -15,6 +15,8 @@
 
 #include "app_battery.h"
 #include "app_led.h"
+#include "app_key.h"
+#include "app_event.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
 /* Private macro ----------------------------------------*/
@@ -27,7 +29,11 @@ int main(void )
 
     Drv_Timer_Init();
 
+    App_Event_Init();
+
     App_Batt_Init();
+
+    App_Key_Init();
 
     App_Led_Init();
     

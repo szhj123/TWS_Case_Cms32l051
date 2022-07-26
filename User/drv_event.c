@@ -10,7 +10,7 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#include "drv_msg.h"
+#include "drv_event.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
 /* Private macro ----------------------------------------*/
@@ -41,14 +41,14 @@ void Drv_Msg_Put(uint8_t cmd, uint8_t *buf, uint8_t length )
 
     msgQueue.qBuf[msgQueue.rear].length = length;
 
-    msgQueue.rear = (msgQueue.rear + 1) % MSG_QUEUE_MAX_LENGT;
+    msgQueue.rear = (msgQueue.rear + 1) % MSG_QUEUE_MAX_LENGTH;
 }
 
 uint8_t Drv_Msg_Get(msg_t *msg )
 {
     uint8_t ret = MSG_NULL;
         
-    if(msgQueue.head != msgQueue)    
+    if(msgQueue.head != msgQueue.rear)    
     {
         *msg = msgQueue.qBuf[msgQueue.head];
 

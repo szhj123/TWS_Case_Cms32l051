@@ -1276,25 +1276,25 @@ typedef enum
 }while(0)
 #else
 #define INTP1_PORT_SETTING() do{ \
-        PORT->INTP1PCFG = 0x25;     /* allocate INTP1 to P121 */ \
-        PORT->PM12  |=  (1 << 1);    /* P50 is used as INTP1 input */ \
-        PORT->PMC12 &= ~(1 << 1);    /* P50 digital function */ \
+        PORT->INTP1PCFG = 0x24;     /* allocate INTP1 to P121 */ \
+        PORT->PM12  |=  (1 << 1);    /* P121 is used as INTP1 input */ \
+        PORT->PMC12 &= ~(1 << 1);    /* P121 digital function */ \
 }while(0)
 
 #endif 
 
 /* ToDo: You can allocate the INTP2 to any desired pins with INTP2PCFG register */
 #define INTP2_PORT_SETTING() do{ \
-        PORT->INTP2PCFG = 0x18;     /* allocate INTP2 to P51 */ \
-        PORT->PM5  |=  (1 << 1);    /* P51 is used as INTP2 input */ \
-        PORT->PMC5 &= ~(1 << 1);    /* P51 digital function */ \
+        PORT->INTP2PCFG = 0x29;     /* allocate INTP2 to P136 */ \
+        PORT->PM13  |=  (1 << 6);    /* P136 is used as INTP2 input */ \
+        PORT->PMC13 &= ~(1 << 6);    /* P136 digital function */ \
 }while(0)
 
 /* ToDo: You can allocate the INTP3 to any desired pins with INTP3PCFG register */
 #define INTP3_PORT_SETTING() do{ \
-        PORT->INTP3PCFG = 0x13;     /* allocate INTP3 to P30 */ \
-        PORT->PM3  |=  (1 << 0);    /* P30 is used as INTP3 input */ \
-        PORT->PMC3 &= ~(1 << 0);    /* P30 digital function */ \
+        PORT->INTP3PCFG = 0x04;     /* allocate INTP3 to P11 */ \
+        PORT->PM1  |=  (1 << 1);    /* P11 is used as INTP3 input */ \
+        PORT->PMC1 &= ~(1 << 1);    /* P11 digital function */ \
 }while(0)
 
 /** @} */ /* End of group Peripherals_Port_Setting_Definations */

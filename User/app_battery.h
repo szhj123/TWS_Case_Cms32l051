@@ -10,6 +10,12 @@
 #define BATT_VOL_10                 3600
 #define BATT_VOL_5                  3475
 
+#define NTC_RES_45                  4356
+#define NTC_RES_42                  4905
+
+#define EARBUD_CUR_MAX_VALUE        300
+#define EARBUD_CUR_MIN_VALUE        10
+
 typedef enum 
 {
     BATT_LEVEL_100 = 0,
@@ -27,12 +33,17 @@ typedef enum _func_state_t
     FUNC_EXIT
 }func_state_t;
 
-typedef enum _batt_state_t
+typedef enum _batt_ntc_state_t
 {
-    BATT_NORMAL = 0,
-    BATT_OVER_TEMPER,
-    BATT_OVER_CUR
-}batt_state_t;
+    BATT_NTC_NORMAL = 0,
+    BATT_NTC_OVER_TEMPER
+}batt_ntc_state_t;
+
+typedef enum _batt_cur_state_t
+{
+    EARBUD_CUR_NORMAL = 0,
+    EARBUD_CUR_OVER
+}batt_cur_state_t;
 
 typedef enum _earbud_state_t
 {
@@ -45,16 +56,17 @@ typedef struct _batt_para_t
     func_state_t dischargingState;
     func_state_t chagingState;
 
-    batt_state_t battState;
-
+    batt_ntc_state_t ntcState;
+    batt_cur_state_t curState;
+    earbud_state_t   earbudState;
+    
     batt_level_t battLevel;
     
     uint16_t battVol;
-    uint16_t battNtc;
-    uint16_t earBudCur;
+    uint16_t ntcVol;
+    uint16_t earbudCur;
+    
     uint8_t  battChgFlag;    
-    uint8_t  battErrFlag;
-    uint8_t  battOverTemperFlag;
     uint8_t  battSampleEndFlag;
     
     uint8_t  usbPluginState;
@@ -62,6 +74,14 @@ typedef struct _batt_para_t
 }batt_para_t;
 
 void App_Batt_Init(void );
+void App_Batt_Set_BatVol(uint16_t batVol );
+void App_Batt_Set_NtcVol(uint16_t ntcVol );
+void App_Batt_Set_EarbudCur(uint16_t earbudCur );
+uint8_t App_Batt_Get_Level(void );
+batt_ntc_state_t App_Batt_Get_Ntc_State(void );
+batt_cur_state_t App_Batt_Get_Cur_State(void );
+earbud_state_t App_Earbud_Get_State(void );
+void App_Batt_Send_Para(void );
 
 #endif 
 

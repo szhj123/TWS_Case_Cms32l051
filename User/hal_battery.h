@@ -8,6 +8,8 @@ void Hal_Batt_Ntc_PwrOn(void );
 void Hal_Batt_Ntc_PwrOff(void );
 void Hal_Batt_Boost_Enable(void );
 void Hal_Batt_Boost_Disable(void );
+void Hal_Batt_Earbud_Charging_Enable(void );
+void Hal_Batt_Earbud_Charging_Disable(void );
 uint8_t Hal_Batt_Get_Usb_State(void );
 uint16_t Hal_Batt_Get_AdcVal(adc_channel_t adcChannel);
 

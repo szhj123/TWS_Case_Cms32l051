@@ -10,9 +10,12 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#define "drv_task.h"
+#include "drv_task.h"
 
 #include "app_event.h"
+#include "app_key.h"
+#include "app_battery.h"
+#include "app_led.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
 /* Private macro ----------------------------------------*/
@@ -35,6 +38,24 @@ static void App_Event_Handler(void *arg )
     {
         switch(msg.cmd)
         {
+            case CMD_BATT:
+            {
+                break;
+            }
+            case CMD_CASE:
+            {
+                uint8_t caseState = msg.buf[0];
+
+                if(caseState)
+                {
+                    
+                }
+                else
+                {
+                    
+                }
+                break;
+            }
             default: break;
         }
     }

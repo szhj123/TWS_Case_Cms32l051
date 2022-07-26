@@ -1,6 +1,8 @@
 #ifndef _DRV_MSG_H
 #define _DRV_MSG_H
 
+#include "hal_cms32l051.h"
+
 #define MSG_DATA_MAX_LENGTH                16
 #define MSG_QUEUE_MAX_LENGTH               8
 

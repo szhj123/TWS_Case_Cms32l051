@@ -12,6 +12,7 @@
 /* Includes ---------------------------------------------*/
 #include "drv_task.h"
 #include "app_battery.h"
+#include "app_event.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/      
 /* Private macro ----------------------------------------*/
@@ -29,6 +30,8 @@ void App_Batt_Init(void )
 
 static void App_Batt_Get_Para(uint8_t *adcSampleEndFlag )
 {
+    const static uint16_t ADC_DET_COUNT = 100;
+    
     static uint16_t adcSampleCnt;
     static uint32_t batVolSum;
     static uint32_t ntcVolSum;
@@ -46,7 +49,7 @@ static void App_Batt_Get_Para(uint8_t *adcSampleEndFlag )
 
     *adcSampleEndFlag = 0;
 
-    if(adcSampleCnt < 100)
+    if(adcSampleCnt < ADC_DET_COUNT)
     {            
         
         batVolSum += tmpBatVol;
@@ -57,9 +60,9 @@ static void App_Batt_Get_Para(uint8_t *adcSampleEndFlag )
     }
     else
     {
-        App_Batt_Set_BatVol(batVolSum / 100);
-        App_Batt_Set_NtcVol(ntcVolSum / 100);
-        App_Batt_Set_EarbudCur(earbudCurSum / 100);
+        App_Batt_Set_BatVol(batVolSum / ADC_DET_COUNT);
+        App_Batt_Set_NtcVol(ntcVolSum / ADC_DET_COUNT);
+        App_Batt_Set_EarbudCur(earbudCurSum / ADC_DET_COUNT);
      
         *adcSampleEndFlag = 1;
 
@@ -74,8 +77,9 @@ static void App_Batt_Handler(void *arg )
 {
     static uint8_t adcSampleEndFlag;
     static uint8_t tmpBattLevel;
-    static batt_state_t tmpBattState;
-    static earbud_state_t tmpEarbudState;
+    static batt_ntc_state_t tmpBattNtcState;
+    static earbud_state_t   tmpEarbudState;
+    static batt_cur_state_t tmpCurState;
     
     App_Batt_Get_Para(&adcSampleEndFlag);
 
@@ -93,7 +97,9 @@ static void App_Batt_Handler(void *arg )
                     
                     tmpBattLevel = App_Batt_Get_Level();
 
-                    tmpBattState = App_Batt_Get_State();
+                    tmpBattNtcState = App_Batt_Get_Ntc_State();
+
+                    tmpCurState = App_Batt_Get_Cur_State();
 
                     tmpEarbudState = App_Earbud_Get_State();
                     
@@ -114,9 +120,16 @@ static void App_Batt_Handler(void *arg )
                         App_Batt_Send_Para();
                     }
 
-                    if(tmpBattState != App_Batt_Get_State())
+                    if(tmpBattNtcState != App_Batt_Get_Ntc_State())
                     {
-                        tmpBattState = App_Batt_Get_State();
+                        tmpBattNtcState = App_Batt_Get_Ntc_State();
+                        
+                        App_Batt_Send_Para();
+                    }
+
+                    if(tmpCurState != App_Batt_Get_Cur_State())
+                    {
+                        tmpEarbudState = App_Earbud_Get_State();
                         
                         App_Batt_Send_Para();
                     }
@@ -124,12 +137,17 @@ static void App_Batt_Handler(void *arg )
                     if(tmpEarbudState != App_Earbud_Get_State())
                     {
                         tmpEarbudState = App_Earbud_Get_State();
-
+                        
                         App_Batt_Send_Para();
                     }
                 }
                 break;
             }
+            case FUNC_EXIT:
+            {
+                break;
+            }
+            default: break;
         }
     }
     else
@@ -146,7 +164,9 @@ static void App_Batt_Handler(void *arg )
                     
                     tmpBattLevel = App_Batt_Get_Level();
 
-                    tmpBattState = App_Batt_Get_State();
+                    tmpBattNtcState = App_Batt_Get_Ntc_State();
+
+                    tmpCurState = App_Batt_Get_Cur_State();
                     
                     App_Batt_Send_Para();
 
@@ -164,9 +184,16 @@ static void App_Batt_Handler(void *arg )
                     App_Batt_Send_Para();
                 }
 
-                if(tmpBattState != App_Batt_Get_State())
+                if(tmpBattNtcState != App_Batt_Get_Ntc_State())
                 {
-                    tmpBattState = App_Batt_Get_State();
+                    tmpBattNtcState = App_Batt_Get_Ntc_State();
+                    
+                    App_Batt_Send_Para();
+                }
+
+                if(tmpCurState != App_Batt_Get_Cur_State())
+                {
+                    tmpEarbudState = App_Earbud_Get_State();
                     
                     App_Batt_Send_Para();
                 }
@@ -255,7 +282,7 @@ uint8_t App_Batt_Get_Level(void )
             }
             case BATT_LEVEL_5:
             {
-                battPara.battVol > (BATT_VOL_5 + battErrVol))
+                if(battPara.battVol > (BATT_VOL_5 + battErrVol))
                 {
                     battPara.battLevel = BATT_LEVEL_10;
                 }
@@ -263,6 +290,78 @@ uint8_t App_Batt_Get_Level(void )
         }
         
     }
+
+    return battPara.battLevel;
+}
+
+void App_Batt_Send_Para(void )
+{
+    uint8_t buf[4] = {0};
+
+    buf[0] = battPara.usbPluginState;
+    buf[1] = battPara.battLevel;
+    buf[2] = (uint8_t )battPara.ntcState;
+    buf[3] = (uint8_t )battPara.curState;
+    
+    Drv_Msg_Put(CMD_BATT, buf, 4);
+}
+
+
+batt_ntc_state_t App_Batt_Get_Ntc_State(void )
+{
+    #if 0
+    uint16_t R_ntc = (battPara.ntcVol * 10) / (battPara.battVol - battPara.ntcVol);
+
+    if(battPara.ntcState == BATT_NTC_NORMAL)
+    {
+        if(R_ntc < NTC_RES_45)
+        {
+            battPara.ntcState = BATT_NTC_OVER_TEMPER;
+        }
+    }
+    else  if(battPara.ntcState == BATT_NTC_OVER_TEMPER) 
+    {
+        if(R_ntc > NTC_RES_45)
+        {
+            battPara.ntcState = BATT_NTC_NORMAL;
+        }
+    }
+    #else
+    
+    battPara.ntcState = BATT_NTC_NORMAL;
+
+    #endif 
+    
+    return battPara.ntcState;
+}
+
+batt_cur_state_t App_Batt_Get_Cur_State(void )
+{
+    if(battPara.earbudCur > EARBUD_CUR_MAX_VALUE)
+    {
+        battPara.curState = EARBUD_CUR_OVER;
+    }
+    else
+    {
+        battPara.curState = EARBUD_CUR_NORMAL;
+    }
+
+    return battPara.curState;
+}
+
+
+earbud_state_t App_Earbud_Get_State(void )
+{
+    if(battPara.earbudCur < EARBUD_CUR_MIN_VALUE)
+    {
+        battPara.earbudState = EARBUD_CHARGING_DONE;
+    }
+    else
+    {
+        battPara.earbudState = EARBUD_CHARGING_PROCESS;
+    }
+    
+    return battPara.earbudState;
 }
 
 void App_Batt_Set_BatVol(uint16_t batVol )
@@ -273,6 +372,16 @@ void App_Batt_Set_BatVol(uint16_t batVol )
 uint16_t App_Batt_Get_BatVol(void )
 {
     return battPara.battVol;
+}
+
+void App_Batt_Set_NtcVol(uint16_t ntcVol )
+{
+    battPara.ntcVol = ntcVol;
+}
+
+void App_Batt_Set_EarbudCur(uint16_t earbudCur )
+{
+    battPara.earbudCur = earbudCur;
 }
 
 void App_Batt_Set_Usb_State(uint8_t state )

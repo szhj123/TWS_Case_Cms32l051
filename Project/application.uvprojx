@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>CMS32L051TS20</Device>
           <Vendor>Cmsemicon</Vendor>
-          <PackID>Cmsemicon.CMS32L051.1.0.0</PackID>
+          <PackID>Cmsemicon.CMS32L051.1.2.0</PackID>
           <PackURL>http://www.mcu.com.cn/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x02000) IROM(0x00000000,0x10000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -443,6 +443,16 @@
               <FileType>1</FileType>
               <FilePath>..\User\main.c</FilePath>
             </File>
+            <File>
+              <FileName>app_event.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\app_event.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\app_key.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -467,6 +477,16 @@
               <FileName>drv_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\drv_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_event.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\drv_event.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\drv_key.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -497,6 +517,11 @@
               <FileName>hal_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\hal_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\hal_key.c</FilePath>
             </File>
           </Files>
         </Group>
