@@ -11,6 +11,7 @@
 
 /* Includes ---------------------------------------------*/
 #include "drv_task.h"
+#include "drv_com.h"
 
 #include "app_event.h"
 #include "app_key.h"
@@ -48,12 +49,15 @@ static void App_Event_Handler(void *arg )
 
                 if(caseState)
                 {
-                    
+                    Drv_Com_Tx_Cmd(CMD_CASE_OPEN);
                 }
                 else
                 {
-                    
+                    Drv_Com_Tx_Cmd(CMD_CASE_CLOSE);
                 }
+
+                App_Led_Light_5S();
+                
                 break;
             }
             default: break;

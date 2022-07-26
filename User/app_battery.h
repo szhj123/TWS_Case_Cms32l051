@@ -81,6 +81,7 @@ uint8_t App_Batt_Get_Level(void );
 batt_ntc_state_t App_Batt_Get_Ntc_State(void );
 batt_cur_state_t App_Batt_Get_Cur_State(void );
 earbud_state_t App_Earbud_Get_State(void );
+uint8_t App_Batt_Get_Usb_State(void );
 void App_Batt_Send_Para(void );
 
 #endif 

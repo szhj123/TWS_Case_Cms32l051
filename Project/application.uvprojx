@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>CMS32L051TS20</Device>
           <Vendor>Cmsemicon</Vendor>
-          <PackID>Cmsemicon.CMS32L051.1.2.0</PackID>
+          <PackID>Cmsemicon.CMS32L051.1.0.0</PackID>
           <PackURL>http://www.mcu.com.cn/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x02000) IROM(0x00000000,0x10000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -488,6 +488,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\drv_key.c</FilePath>
             </File>
+            <File>
+              <FileName>drv_com.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\drv_com.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -522,6 +527,11 @@
               <FileName>hal_key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\hal_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_com.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\hal_com.c</FilePath>
             </File>
           </Files>
         </Group>

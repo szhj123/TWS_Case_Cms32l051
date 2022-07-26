@@ -352,7 +352,7 @@ batt_cur_state_t App_Batt_Get_Cur_State(void )
 
 earbud_state_t App_Earbud_Get_State(void )
 {
-    if(battPara.earbudCur < EARBUD_CUR_MIN_VALUE)
+    if(battPara.earbudCur <= EARBUD_CUR_MIN_VALUE)
     {
         battPara.earbudState = EARBUD_CHARGING_DONE;
     }
@@ -384,13 +384,8 @@ void App_Batt_Set_EarbudCur(uint16_t earbudCur )
     battPara.earbudCur = earbudCur;
 }
 
-void App_Batt_Set_Usb_State(uint8_t state )
-{
-    battPara.usbPluginState = state;
-}
-
 uint8_t App_Batt_Get_Usb_State(void )
 {
-    return battPara.usbPluginState;
+    return Drv_Batt_Get_Usb_State();
 }
 
