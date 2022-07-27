@@ -24,7 +24,7 @@ static void App_Hall_Detect_Callback(void );
 static void App_Key_Detect(void *arg);
 static void App_Hall_Handler(void *arg );
 /* Private variables ------------------------------------*/
-static uint8_t keyTimerId = KEY_NULL;
+static uint8_t keyTimerId = TIMER_NULL;
 
 void App_Key_Init(void )
 {
@@ -35,9 +35,9 @@ void App_Key_Init(void )
 
 static void App_Key_Detect_Callback(void )
 {
-    if(keyTimerId == KEY_NULL)
+    if(keyTimerId == TIMER_NULL)
     {
-        Drv_Timer_Regist_Period(App_Key_Detect, 0, 1, NULL);
+       keyTimerId = Drv_Timer_Regist_Period(App_Key_Detect, 0, 1, NULL);
     }
 }
 
@@ -64,6 +64,8 @@ static void App_Key_Detect(void *arg )
         }
         case KEY_TX | KEY_LONG:
         {
+            Drv_Msg_Put(CMD_KEY, &keyVal, 1);
+            
             break;
         }
         default: break;
@@ -71,7 +73,12 @@ static void App_Key_Detect(void *arg )
 
     if(keyVal & KEY_UP)
     {
-        Drv_Timer_Delete(keyTimerId);
+        if(keyTimerId != TIMER_NULL)
+        {
+            Drv_Timer_Delete(keyTimerId);
+
+            keyTimerId = TIMER_NULL;
+        }
     }
 
     keyVal = KEY_NULL;

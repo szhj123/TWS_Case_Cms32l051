@@ -5,8 +5,6 @@
 #include "hal_battery.h"
 
 void Hal_Com_Init(void );
-void Hal_COM_STATE_TX_HIGH(void );
-void Hal_COM_STATE_TX_LOW(void );
 void Hal_Com_Tx_Enable(void );
 void Hal_Com_Tx_Disable(void );
 

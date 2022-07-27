@@ -62,6 +62,17 @@ static void App_Event_Handler(void *arg )
                 
                 break;
             }
+            case CMD_KEY:
+            {
+                uint8_t keyVal = msg.buf[0];
+
+                if(keyVal == (KEY_TX | KEY_LONG))
+                {
+                    Drv_Com_Tx_Cmd(CMD_CASE_TWS_PAIRING);
+
+                    App_Led_Earbud_Pair();
+                }
+            }
             default: break;
         }
     }

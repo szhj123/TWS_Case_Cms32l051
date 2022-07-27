@@ -23,6 +23,7 @@ void App_Led_Light_5S(void );
 void App_Led_Batt_Charging(void );
 void App_Led_Batt_Discharing(void );
 void App_Led_Batt_Error(void );
+void App_Led_Earbud_Pair(void );
 
 
 #endif 

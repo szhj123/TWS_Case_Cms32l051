@@ -20,6 +20,7 @@
 /* Private function -------------------------------------*/
 static void App_Led_Handler(void *arg );
 static void App_Led_Light_5S_End_Callback(void *arg );
+static void App_Led_Earbud_Pair_End_Callback(void *arg );
 /* Private variables ------------------------------------*/
 led_ctrl_block_t battLed1 = 
 {
@@ -101,12 +102,12 @@ void App_Led_Light_5S(void )
 
     if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
     {
-         App_Led_Batt_Discharing();
+        App_Led_Batt_Discharing();
+         
+        Drv_Timer_Delete(ledTimerId);
+
+        ledTimerId = Drv_Timer_Regist_Oneshot(App_Led_Light_5S_End_Callback, 5000, NULL);
     }
-
-    Drv_Timer_Delete(ledTimerId);
-
-    ledTimerId = Drv_Timer_Regist_Oneshot(App_Led_Light_5S_End_Callback, 5000, NULL);
 }
 
 static void App_Led_Light_5S_End_Callback(void *arg )
@@ -120,7 +121,7 @@ void App_Led_Batt_Discharing(void )
     
     battLevel = App_Batt_Get_Level();
     
-    if(battLevel == BATT_LEVEL_75)
+    if(battLevel == BATT_LEVEL_75 || battLevel == BATT_LEVEL_100)
     {
         ledSolidOnNum = 4;
 
@@ -200,13 +201,13 @@ void App_Led_Batt_Charging(void )
 
 void App_Led_Batt_Error(void )
 {
-    battLed1.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed1.ledOffTime = LED_FLASH_QUICK_OFF_TIME;
     battLed1.ledOnTime = LED_FLASH_QUICK_ON_TIME;
-    battLed2.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed2.ledOffTime = LED_FLASH_QUICK_OFF_TIME;
     battLed2.ledOnTime = LED_FLASH_QUICK_ON_TIME;
-    battLed3.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed3.ledOffTime = LED_FLASH_QUICK_OFF_TIME;
     battLed3.ledOnTime = LED_FLASH_QUICK_ON_TIME;
-    battLed4.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed4.ledOffTime = LED_FLASH_QUICK_OFF_TIME;
     battLed4.ledOnTime = LED_FLASH_QUICK_ON_TIME;
 
     battLed1.ledDelayCnt = 0;
@@ -214,7 +215,49 @@ void App_Led_Batt_Error(void )
     battLed3.ledDelayCnt = 0;
     battLed4.ledDelayCnt = 0;
 
+    
+
     App_Led_Flash_callback = App_Led_Flash_All;
+}
+
+void App_Led_Earbud_Pair(void )
+{
+    battLed1.ledOffTime = LED_FLASH_REGULAR_OFF_TIME;
+    battLed1.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+    battLed2.ledOffTime = LED_FLASH_REGULAR_OFF_TIME;
+    battLed2.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+    battLed3.ledOffTime = LED_FLASH_REGULAR_OFF_TIME;
+    battLed3.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+    battLed4.ledOffTime = LED_FLASH_REGULAR_OFF_TIME;
+    battLed4.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+
+    battLed1.ledDelayCnt = 0;
+    battLed2.ledDelayCnt = 0;
+    battLed3.ledDelayCnt = 0;
+    battLed4.ledDelayCnt = 0;
+
+    Drv_Led_On(&battLed1);
+    Drv_Led_On(&battLed2);
+    Drv_Led_Off(&battLed3);
+    Drv_Led_Off(&battLed4);
+
+    App_Led_Flash_callback = App_Led_Flash_All;
+
+    Drv_Timer_Delete(ledTimerId);
+
+    ledTimerId = Drv_Timer_Regist_Oneshot(App_Led_Earbud_Pair_End_Callback, 5000, NULL);
+}
+
+static void App_Led_Earbud_Pair_End_Callback(void *arg )
+{
+    if(App_Batt_Get_Usb_State())
+    {
+        App_Led_Batt_Charging();
+    }
+    else
+    {
+        App_Led_Batt_Discharing();
+    }
 }
 
 void App_Led_All_Off(void )

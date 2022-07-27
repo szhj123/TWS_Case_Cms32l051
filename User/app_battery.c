@@ -30,7 +30,7 @@ void App_Batt_Init(void )
 
 static void App_Batt_Get_Para(uint8_t *adcSampleEndFlag )
 {
-    const static uint16_t ADC_DET_COUNT = 100;
+    const static uint16_t ADC_DET_COUNT = 200;
     
     static uint16_t adcSampleCnt;
     static uint32_t batVolSum;
@@ -161,7 +161,6 @@ static void App_Batt_Handler(void *arg )
         {
             case FUNC_ENTRY:
             {
-                
                 if(adcSampleEndFlag)
                 {
                     if(battVolSave == 0)
@@ -182,9 +181,9 @@ static void App_Batt_Handler(void *arg )
                     }
                     else
                     {
-                        if(++battDelayCnt > 20)
+                        if(++battDelayCnt > 15)
                         {
-                            battPara.battErrVol = battPara.battVol - battVolSave;
+                            battPara.battErrVol =  battPara.battVol > battVolSave ? (battPara.battVol - battVolSave) : 0;
                             battDelayCnt = 0;
                             battVolSave = 0;
                             battPara.chagingState = FUNC_HANDLER;
@@ -209,8 +208,14 @@ static void App_Batt_Handler(void *arg )
                             }
                         }
                     }
+
                     
+                    static uint16_t detectBattVol;
+                    static uint16_t trueBattVol;
+                    
+                    detectBattVol = battPara.battVol;
                     battPara.battVol -= battPara.battErrVol;
+                    trueBattVol = battPara.battVol;
                     
                     if(App_Batt_Get_Level() > tmpBattLevel)
                     {

@@ -18,12 +18,13 @@
 
 typedef enum 
 {
-    BATT_LEVEL_100 = 0,
-    BATT_LEVEL_75,
-    BATT_LEVEL_50,
-    BATT_LEVEL_25,
+    BATT_LEVEL_= 0,
+    BATT_LEVEL_5, 
     BATT_LEVEL_10,
-    BATT_LEVEL_5
+    BATT_LEVEL_25,
+    BATT_LEVEL_50,
+    BATT_LEVEL_75,
+    BATT_LEVEL_100
 }batt_level_t;
 
 typedef enum _func_state_t

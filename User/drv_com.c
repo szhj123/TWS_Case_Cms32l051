@@ -86,6 +86,8 @@ static void Drv_Com_Tx_Handler(void *arg )
                 if(++com.txCnt >= 10)
                 {
                     Hal_Batt_Boost_Enable();
+
+                    Hal_Com_Tx_Disable();
                     
                     com.txCnt = 0;
 
@@ -115,11 +117,9 @@ uint8_t Drv_Com_Get_Tx_State(void )
 
 void Drv_COM_STATE_TX_HIGH(void )
 {
-    Hal_Batt_Boost_Disable();
+    Hal_Batt_Boost_Enable();
 
     Hal_Com_Tx_Enable();
-
-    Hal_COM_STATE_TX_HIGH();
 }
 
 void Drv_COM_STATE_TX_LOW(void )
@@ -127,7 +127,5 @@ void Drv_COM_STATE_TX_LOW(void )
     Hal_Batt_Boost_Disable();
 
     Hal_Com_Tx_Enable();
-
-    Hal_COM_STATE_TX_LOW();
 }
 
