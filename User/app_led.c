@@ -61,7 +61,7 @@ led_ctrl_block_t battLed4 =
     .ledDelayCnt = 0
 };
 
-app_led_flash_callback_t app_led_flash_callback = NULL;
+App_Led_Flash_callback_t App_Led_Flash_callback = NULL;
 
 static uint8_t ledSolidOnNum;
 static uint8_t ledFlashIndex;
@@ -86,9 +86,9 @@ void App_Led_Init(void )
 
 static void App_Led_Handler(void *arg )
 {
-    if(app_led_flash_callback != NULL)
+    if(App_Led_Flash_callback != NULL)
     {
-        app_led_flash_callback();
+        App_Led_Flash_callback();
     }
 }
 
@@ -101,33 +101,7 @@ void App_Led_Light_5S(void )
 
     if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
     {
-        if(App_Batt_Get_Level() == BATT_LEVEL_75)
-        {
-            ledSolidOnNum = 4;
-
-            app_led_flash_callback = App_Led_Solid_On;
-        }
-        else if(App_Batt_Get_Level() == BATT_LEVEL_50)
-        {
-            ledSolidOnNum = 3;
-            app_led_flash_callback = App_Led_Solid_On;
-        }
-        else if(App_Batt_Get_Level() == BATT_LEVEL_25)
-        {
-            ledSolidOnNum = 2;
-            app_led_flash_callback = App_Led_Solid_On;
-        }
-        else if(App_Batt_Get_Level() == BATT_LEVEL_10)
-        {
-            ledSolidOnNum = 1;
-            app_led_flash_callback = App_Led_Solid_On;
-        }
-        else if(App_Batt_Get_Level() == BATT_LEVEL_5)
-        {
-            ledFlashIndex = 1;
-
-            app_led_flash_callback = App_Led_Flash;
-        }
+         App_Led_Batt_Discharing();
     }
 
     Drv_Timer_Delete(ledTimerId);
@@ -138,42 +112,109 @@ void App_Led_Light_5S(void )
 static void App_Led_Light_5S_End_Callback(void *arg )
 {
     App_Led_All_Off();
-
-    app_led_flash_callback = NULL;
 }
 
-void App_Led_Charging(void )
+void App_Led_Batt_Discharing(void )
 {
+    uint8_t battLevel;
+    
+    battLevel = App_Batt_Get_Level();
+    
+    if(battLevel == BATT_LEVEL_75)
+    {
+        ledSolidOnNum = 4;
+
+        App_Led_Flash_callback = App_Led_Solid_On;
+    }
+    else if(battLevel == BATT_LEVEL_50)
+    {
+        ledSolidOnNum = 3;
+        App_Led_Flash_callback = App_Led_Solid_On;
+    }
+    else if(battLevel == BATT_LEVEL_25)
+    {
+        ledSolidOnNum = 2;
+        App_Led_Flash_callback = App_Led_Solid_On;
+    }
+    else if(battLevel == BATT_LEVEL_10)
+    {
+        ledSolidOnNum = 1;
+        App_Led_Flash_callback = App_Led_Solid_On;
+    }
+    else if(battLevel == BATT_LEVEL_5)
+    {
+        ledFlashIndex = 1;
+        
+        battLed1.ledOffTime = LED_FLASH_REGULAR_ON_TIME;
+        battLed1.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+        battLed1.ledDelayCnt = 0;
+            
+        App_Led_Flash_callback = App_Led_Flash_One;
+    }
+}
+
+void App_Led_Batt_Charging(void )
+{
+    uint8_t battLevel;
+    
     if(App_Batt_Get_Usb_State())
     {
-        if(App_Batt_Get_Level() == BATT_LEVEL_100)
+        battLevel = App_Batt_Get_Level();
+        
+        if(battLevel == BATT_LEVEL_100)
         {
             ledSolidOnNum = 4;
 
-            app_led_flash_callback = App_Led_Solid_On;
+            App_Led_Flash_callback = App_Led_Solid_On;
         }
-        else if(App_Batt_Get_Level() == BATT_LEVEL_75)
+        else if(battLevel == BATT_LEVEL_75)
         {
             ledFlashIndex = 4;
-
-            app_led_flash_callback = App_Led_Solid_On;
+            battLed4.ledOffTime = LED_FLASH_REGULAR_ON_TIME;
+            battLed4.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+            App_Led_Flash_callback = App_Led_Flash_One;
         }
-        else if(App_Batt_Get_Level() == BATT_LEVEL_50)
+        else if(battLevel == BATT_LEVEL_50)
         {
             ledFlashIndex = 3;
-            app_led_flash_callback = App_Led_Solid_On;
+            battLed3.ledOffTime = LED_FLASH_REGULAR_ON_TIME;
+            battLed3.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+            App_Led_Flash_callback = App_Led_Flash_One;
         }
-        else if(App_Batt_Get_Level() == BATT_LEVEL_25)
+        else if(battLevel == BATT_LEVEL_25)
         {
             ledFlashIndex = 2;
-            app_led_flash_callback = App_Led_Solid_On;
+            battLed2.ledOffTime = LED_FLASH_REGULAR_ON_TIME;
+            battLed2.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+            App_Led_Flash_callback = App_Led_Flash_One;
         }
         else 
         {
             ledFlashIndex = 1;
-            app_led_flash_callback = App_Led_Solid_On;
+            battLed1.ledOffTime = LED_FLASH_REGULAR_ON_TIME;
+            battLed1.ledOnTime = LED_FLASH_REGULAR_ON_TIME;
+            App_Led_Flash_callback = App_Led_Flash_One;
         }
     }
+}
+
+void App_Led_Batt_Error(void )
+{
+    battLed1.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed1.ledOnTime = LED_FLASH_QUICK_ON_TIME;
+    battLed2.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed2.ledOnTime = LED_FLASH_QUICK_ON_TIME;
+    battLed3.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed3.ledOnTime = LED_FLASH_QUICK_ON_TIME;
+    battLed4.ledOffTime = LED_FLASH_QUICK_ON_TIME;
+    battLed4.ledOnTime = LED_FLASH_QUICK_ON_TIME;
+
+    battLed1.ledDelayCnt = 0;
+    battLed2.ledDelayCnt = 0;
+    battLed3.ledDelayCnt = 0;
+    battLed4.ledDelayCnt = 0;
+
+    App_Led_Flash_callback = App_Led_Flash_All;
 }
 
 void App_Led_All_Off(void )
@@ -182,6 +223,8 @@ void App_Led_All_Off(void )
     Drv_Led_Off(&battLed2);
     Drv_Led_Off(&battLed3);
     Drv_Led_Off(&battLed4);
+
+    App_Led_Flash_callback = NULL;
 }
 
 void App_Led_All_On(void )
@@ -224,7 +267,7 @@ void App_Led_Solid_On(void )
     }
 }
 
-void App_Led_Flash(void )
+void App_Led_Flash_One(void )
 {
     if(ledFlashIndex == 4)
     {
@@ -254,6 +297,14 @@ void App_Led_Flash(void )
         Drv_Led_Off(&battLed3);
         Drv_Led_Off(&battLed4);
     }
+}
+
+void App_Led_Flash_All(void )
+{
+    Drv_Led_Flash_Handler(&battLed1);
+    Drv_Led_Flash_Handler(&battLed2);
+    Drv_Led_Flash_Handler(&battLed3);
+    Drv_Led_Flash_Handler(&battLed4);
 }
 
 

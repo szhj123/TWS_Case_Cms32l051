@@ -8,6 +8,7 @@
 
 void Drv_Batt_Init(void );
 uint8_t Drv_Batt_Get_Usb_State(void );
+uint8_t Drv_Batt_Get_Charing_State(void );
 uint16_t Drv_Batt_Get_BatVol(void );
 uint16_t Drv_Batt_Get_NtcVol(void );
 uint16_t Drv_Battery_Get_EarbudCur(void );

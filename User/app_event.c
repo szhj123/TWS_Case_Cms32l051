@@ -22,6 +22,7 @@
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 static void App_Event_Handler(void *arg );
+static void App_Event_Batt_Handler(uint8_t *buf, uint8_t length );
 /* Private variables ------------------------------------*/
 
 void App_Event_Init(void )
@@ -41,6 +42,7 @@ static void App_Event_Handler(void *arg )
         {
             case CMD_BATT:
             {
+                App_Event_Batt_Handler(msg.buf, msg.length);
                 break;
             }
             case CMD_CASE:
@@ -61,6 +63,60 @@ static void App_Event_Handler(void *arg )
                 break;
             }
             default: break;
+        }
+    }
+}
+
+static void App_Event_Batt_Handler(uint8_t *buf, uint8_t length )
+{
+    uint8_t usbPlugState = buf[0];
+    batt_level_t battLevel = (batt_level_t )buf[1];
+    batt_ntc_state_t ntcState = (batt_ntc_state_t )buf[2];
+    batt_cur_state_t curState = (batt_cur_state_t )buf[3];
+    earbud_state_t   earbudState = (earbud_state_t )buf[4];
+
+    if(usbPlugState)
+    {
+        if(ntcState == BATT_NTC_OVER_TEMPER || curState == BATT_CUR_OVER)
+        {
+            Drv_Batt_Boost_Disable();
+
+            App_Led_Batt_Error();
+        }
+        else
+        {
+            if(Drv_Com_Get_Tx_State() == COM_TX_IDLE)
+            {
+                Drv_Batt_Boost_Enable();
+
+                App_Led_Batt_Charging();
+            }
+        }
+    }
+    else
+    {
+        if(ntcState == BATT_NTC_OVER_TEMPER || curState == BATT_CUR_OVER)
+        {
+            Drv_Batt_Boost_Disable();
+
+            App_Led_Batt_Error();
+        }
+        else
+        {
+            if(Drv_Com_Get_Tx_State() == COM_TX_IDLE)
+            {
+                Drv_Batt_Boost_Enable();
+
+                if(earbudState == EARBUD_CHARGING_DONE)
+                {
+                    App_Led_All_Off();
+                }
+                else
+                {
+                    App_Led_Batt_Discharing();
+                }
+
+            }
         }
     }
 }

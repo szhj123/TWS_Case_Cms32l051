@@ -78,6 +78,11 @@ uint8_t Hal_Batt_Get_Usb_State(void )
     return PORT_GetBit(PORT12, PIN1);
 }
 
+uint8_t Hal_Batt_Get_Charging_State(void )
+{
+    return PORT_GetBit(PORT2, PIN3);
+}
+
 uint16_t Hal_Batt_Get_AdcVal(adc_channel_t adcChannel)
 {
     uint16_t tmpBuf[16];

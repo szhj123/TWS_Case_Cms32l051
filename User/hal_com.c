@@ -25,12 +25,12 @@ void Hal_Com_Init(void )
     PORT_Init(PORT12, PIN2, OUTPUT);
 }
 
-void Hal_Com_Tx_High(void )
+void Hal_COM_STATE_TX_HIGH(void )
 {
     PORT_SetBit(PORT1, PIN2);
 }
 
-void Hal_Com_Tx_Low(void )
+void Hal_COM_STATE_TX_LOW(void )
 {
    PORT_ClrBit(PORT1, PIN2);
 }

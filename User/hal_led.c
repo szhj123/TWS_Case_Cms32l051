@@ -36,10 +36,10 @@ uint8_t Hal_Led_Get_State(PORT_TypeDef port, PIN_TypeDef pin )
 {
     if(PORT_GetBit(port, pin))
     {
-        return LED_OFF;
+        return LED_ON;
     }
     else
     {
-        return LED_ON;
+        return LED_OFF;
     }
 }

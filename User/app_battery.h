@@ -41,8 +41,8 @@ typedef enum _batt_ntc_state_t
 
 typedef enum _batt_cur_state_t
 {
-    EARBUD_CUR_NORMAL = 0,
-    EARBUD_CUR_OVER
+    BATT_CUR_NORMAL = 0,
+    BATT_CUR_OVER
 }batt_cur_state_t;
 
 typedef enum _earbud_state_t
@@ -63,6 +63,7 @@ typedef struct _batt_para_t
     batt_level_t battLevel;
     
     uint16_t battVol;
+    uint16_t battErrVol;
     uint16_t ntcVol;
     uint16_t earbudCur;
     
@@ -76,6 +77,7 @@ typedef struct _batt_para_t
 void App_Batt_Init(void );
 void App_Batt_Set_BatVol(uint16_t batVol );
 void App_Batt_Set_NtcVol(uint16_t ntcVol );
+uint16_t App_Batt_Get_BatVol(void );
 void App_Batt_Set_EarbudCur(uint16_t earbudCur );
 uint8_t App_Batt_Get_Level(void );
 batt_ntc_state_t App_Batt_Get_Ntc_State(void );

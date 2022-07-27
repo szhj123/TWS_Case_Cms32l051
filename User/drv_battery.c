@@ -26,7 +26,11 @@ void Drv_Batt_Init(void )
 uint8_t Drv_Batt_Get_Usb_State(void )
 {
     return Hal_Batt_Get_Usb_State();
-    
+}
+
+uint8_t Drv_Batt_Get_Charing_State(void )
+{
+    return Hal_Batt_Get_Charging_State();
 }
 
 uint16_t Drv_Batt_Get_BatVol(void )

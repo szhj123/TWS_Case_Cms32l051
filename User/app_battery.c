@@ -129,7 +129,7 @@ static void App_Batt_Handler(void *arg )
 
                     if(tmpCurState != App_Batt_Get_Cur_State())
                     {
-                        tmpEarbudState = App_Earbud_Get_State();
+                        tmpCurState = App_Batt_Get_Cur_State();
                         
                         App_Batt_Send_Para();
                     }
@@ -152,52 +152,87 @@ static void App_Batt_Handler(void *arg )
     }
     else
     {
+        static uint16_t battDelayCnt = 0;
+        static uint16_t battVolSave = 0;
+        
         battPara.dischargingState = FUNC_ENTRY;
 
         switch(battPara.chagingState)
         {
             case FUNC_ENTRY:
             {
+                
                 if(adcSampleEndFlag)
                 {
-                    Drv_Batt_Boost_Enable();
-                    
-                    tmpBattLevel = App_Batt_Get_Level();
+                    if(battVolSave == 0)
+                    {
+                        Drv_Batt_Boost_Enable();
 
-                    tmpBattNtcState = App_Batt_Get_Ntc_State();
+                        tmpBattLevel = App_Batt_Get_Level();
 
-                    tmpCurState = App_Batt_Get_Cur_State();
-                    
-                    App_Batt_Send_Para();
+                        tmpBattNtcState = App_Batt_Get_Ntc_State();
 
-                    battPara.chagingState = FUNC_HANDLER;
+                        tmpCurState = App_Batt_Get_Cur_State();
+
+                        battVolSave = App_Batt_Get_BatVol();
+
+                        battDelayCnt = 0;
+                         
+                        App_Batt_Send_Para();
+                    }
+                    else
+                    {
+                        if(++battDelayCnt > 20)
+                        {
+                            battPara.battErrVol = battPara.battVol - battVolSave;
+                            battDelayCnt = 0;
+                            battVolSave = 0;
+                            battPara.chagingState = FUNC_HANDLER;
+                        }
+                    }
                 }
-                
                 break;
             }
             case FUNC_HANDLER:
             {
-                if(App_Batt_Get_Level() > tmpBattLevel)
+                if(adcSampleEndFlag)
                 {
-                    tmpBattLevel = App_Batt_Get_Level();
-                    
-                    App_Batt_Send_Para();
-                }
+                    if(battPara.battVol >= 4200)
+                    {
+                        if(battPara.battErrVol > 0)
+                        {
+                            if(++battDelayCnt > 50)
+                            {
+                                battDelayCnt = 0;
 
-                if(tmpBattNtcState != App_Batt_Get_Ntc_State())
-                {
-                    tmpBattNtcState = App_Batt_Get_Ntc_State();
+                                battPara.battErrVol--;
+                            }
+                        }
+                    }
                     
-                    App_Batt_Send_Para();
-                }
+                    battPara.battVol -= battPara.battErrVol;
+                    
+                    if(App_Batt_Get_Level() > tmpBattLevel)
+                    {
+                        tmpBattLevel = App_Batt_Get_Level();
+                        
+                        App_Batt_Send_Para();
+                    }
 
-                if(tmpCurState != App_Batt_Get_Cur_State())
-                {
-                    tmpEarbudState = App_Earbud_Get_State();
-                    
-                    App_Batt_Send_Para();
+                    if(tmpBattNtcState != App_Batt_Get_Ntc_State())
+                    {
+                        tmpBattNtcState = App_Batt_Get_Ntc_State();
+                        
+                        App_Batt_Send_Para();
+                    }
+
+                    if(tmpCurState != App_Batt_Get_Cur_State())
+                    {
+                        tmpEarbudState = App_Earbud_Get_State();
+                        
+                        App_Batt_Send_Para();
+                    }
                 }
-                
                 break;
             }
             default: break;
@@ -207,7 +242,17 @@ static void App_Batt_Handler(void *arg )
 
 uint8_t App_Batt_Get_Level(void )
 {
-    const uint8_t battErrVol = 25;//mv
+    const uint8_t battErrVol = 50;//mv
+
+    if(Drv_Batt_Get_Usb_State())
+    {
+        if(Drv_Batt_Get_Charing_State())
+        {
+            battPara.battLevel = BATT_LEVEL_100;
+
+            return battPara.battLevel;
+        }
+    }
     
     if(battPara.battLevel == 0)
     {
@@ -296,21 +341,21 @@ uint8_t App_Batt_Get_Level(void )
 
 void App_Batt_Send_Para(void )
 {
-    uint8_t buf[4] = {0};
+    uint8_t buf[5] = {0};
 
-    buf[0] = battPara.usbPluginState;
+    buf[0] = App_Batt_Get_Usb_State();
     buf[1] = battPara.battLevel;
     buf[2] = (uint8_t )battPara.ntcState;
     buf[3] = (uint8_t )battPara.curState;
+    buf[4] = (uint8_t )battPara.earbudState;    
     
-    Drv_Msg_Put(CMD_BATT, buf, 4);
+    Drv_Msg_Put(CMD_BATT, buf, sizeof(buf));
 }
 
 
 batt_ntc_state_t App_Batt_Get_Ntc_State(void )
 {
-    #if 0
-    uint16_t R_ntc = (battPara.ntcVol * 10) / (battPara.battVol - battPara.ntcVol);
+    uint32_t R_ntc = ((uint32_t )battPara.ntcVol * 10 * 1000) / (battPara.battVol - battPara.ntcVol);
 
     if(battPara.ntcState == BATT_NTC_NORMAL)
     {
@@ -321,16 +366,11 @@ batt_ntc_state_t App_Batt_Get_Ntc_State(void )
     }
     else  if(battPara.ntcState == BATT_NTC_OVER_TEMPER) 
     {
-        if(R_ntc > NTC_RES_45)
+        if(R_ntc > NTC_RES_42)
         {
             battPara.ntcState = BATT_NTC_NORMAL;
         }
     }
-    #else
-    
-    battPara.ntcState = BATT_NTC_NORMAL;
-
-    #endif 
     
     return battPara.ntcState;
 }
@@ -339,11 +379,11 @@ batt_cur_state_t App_Batt_Get_Cur_State(void )
 {
     if(battPara.earbudCur > EARBUD_CUR_MAX_VALUE)
     {
-        battPara.curState = EARBUD_CUR_OVER;
+        battPara.curState = BATT_CUR_OVER;
     }
     else
     {
-        battPara.curState = EARBUD_CUR_NORMAL;
+        battPara.curState = BATT_CUR_NORMAL;
     }
 
     return battPara.curState;

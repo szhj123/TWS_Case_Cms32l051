@@ -31,13 +31,13 @@ void Drv_Com_Tx_Cmd(uint16_t lowLevelTime )
 {
      com.lowLevelTime = lowLevelTime;
      
-     com.comTxState = COM_TX_INIT;
+     com.comTxState = COM_STATE_TX_INIT;
 
      com.delayCnt = 0;
      
      com.txCnt = 0;
 
-     com.txEn = 1;
+     com.txEn = COM_TX_BUSY;
 }
 
 static void Drv_Com_Tx_Handler(void *arg )
@@ -54,30 +54,30 @@ static void Drv_Com_Tx_Handler(void *arg )
 
     switch(com.comTxState)
     {
-        case COM_TX_INIT:
+        case COM_STATE_TX_INIT:
         {
-            Drv_Com_Tx_High();
+            Drv_COM_STATE_TX_HIGH();
             
             com.delayCnt = 0;
 
-            com.comTxState = COM_TX_HIGH;
+            com.comTxState = COM_STATE_TX_HIGH;
             
             break;
         }
-        case COM_TX_HIGH:
+        case COM_STATE_TX_HIGH:
         {
             if(com.delayCnt > 50)
             {
-                Drv_Com_Tx_Low();
+                Drv_COM_STATE_TX_LOW();
 
                 com.delayCnt = 0;
 
-                com.comTxState = COM_TX_LOW;
+                com.comTxState = COM_STATE_TX_LOW;
             }
             
             break;
         }
-        case COM_TX_LOW:
+        case COM_STATE_TX_LOW:
         {
             if(com.delayCnt > com.lowLevelTime)
             {
@@ -85,20 +85,22 @@ static void Drv_Com_Tx_Handler(void *arg )
 
                 if(++com.txCnt >= 10)
                 {
+                    Hal_Batt_Boost_Enable();
+                    
                     com.txCnt = 0;
 
-                    com.comTxState = COM_TX_EXIT;
+                    com.comTxState = COM_STATE_TX_EXIT;
                 }
                 else
                 {
-                    com.comTxState = COM_TX_INIT;
+                    com.comTxState = COM_STATE_TX_INIT;
                 }
             }
             break;
         }
-        case COM_TX_EXIT:
+        case COM_STATE_TX_EXIT:
         {
-            com.txEn = 0;
+            com.txEn = COM_TX_IDLE;
             
             break;
         }
@@ -111,21 +113,21 @@ uint8_t Drv_Com_Get_Tx_State(void )
     return com.txEn;
 }
 
-void Drv_Com_Tx_High(void )
+void Drv_COM_STATE_TX_HIGH(void )
 {
     Hal_Batt_Boost_Disable();
 
     Hal_Com_Tx_Enable();
 
-    Hal_Com_Tx_High();
+    Hal_COM_STATE_TX_HIGH();
 }
 
-void Drv_Com_Tx_Low(void )
+void Drv_COM_STATE_TX_LOW(void )
 {
     Hal_Batt_Boost_Disable();
 
     Hal_Com_Tx_Enable();
 
-    Hal_Com_Tx_Low();
+    Hal_COM_STATE_TX_LOW();
 }
 
