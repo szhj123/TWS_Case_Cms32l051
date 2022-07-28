@@ -120,7 +120,11 @@ static void App_Event_Batt_Handler(uint8_t *buf, uint8_t length )
 
                 if(earbudState == EARBUD_CHARGING_DONE)
                 {
-                    App_Led_All_Off();
+                    App_Led_Earbud_Charging_Done();
+                    
+                    if(App_Key_Get_Hall_State() == CASE_CLOSE)
+                    {
+                    }
                 }
                 else
                 {
@@ -130,5 +134,23 @@ static void App_Event_Batt_Handler(uint8_t *buf, uint8_t length )
             }
         }
     }
+}
+
+void App_Sys_Sleep(void )
+{
+    App_Led_All_Off();
+
+    CGC->PMUKEY = 0x192A;
+    CGC->PMUKEY = 0x3E4F;
+    CGC->PMUCTL = 1;
+
+    __STOP(); 		// DeepSleep
+}
+
+void App_Sys_Wakeup(void )
+{
+    Hal_Timer_Init();
+
+    Hal_Batt_Init();
 }
 

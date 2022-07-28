@@ -113,6 +113,8 @@ void App_Led_Light_5S(void )
 static void App_Led_Light_5S_End_Callback(void *arg )
 {
     App_Led_All_Off();
+    
+    App_Led_Flash_callback = NULL;
 }
 
 void App_Led_Batt_Discharing(void )
@@ -260,14 +262,19 @@ static void App_Led_Earbud_Pair_End_Callback(void *arg )
     }
 }
 
+void App_Led_Earbud_Charging_Done(void )
+{
+    App_Led_All_Off();
+    
+    App_Led_Flash_callback = NULL;
+}
+
 void App_Led_All_Off(void )
 {
     Drv_Led_Off(&battLed1);
     Drv_Led_Off(&battLed2);
     Drv_Led_Off(&battLed3);
     Drv_Led_Off(&battLed4);
-
-    App_Led_Flash_callback = NULL;
 }
 
 void App_Led_All_On(void )

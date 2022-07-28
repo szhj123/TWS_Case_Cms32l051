@@ -8,6 +8,7 @@
 #define CMD_KEY                 0x03
 
 void App_Event_Init(void );
+uint8_t App_Key_Get_Hall_State(void );
 
 #endif 
 

@@ -261,7 +261,7 @@ uint8_t App_Batt_Get_Level(void )
     
     if(battPara.battLevel == 0)
     {
-        if(battPara.battVol > BATT_VOL_75)
+        if(battPara.battVol > BATT_VOL_75 && battPara.battVol <= (BATT_VOL_100 - battErrVol))
         {
             battPara.battLevel = BATT_LEVEL_75;
         }
@@ -286,6 +286,14 @@ uint8_t App_Batt_Get_Level(void )
     {
         switch(battPara.battLevel)
         {
+            case BATT_LEVEL_100:
+            {
+                if(battPara.battVol < (BATT_VOL_100 - battErrVol))
+                {
+                    battPara.battLevel = BATT_LEVEL_75;
+                }
+                break;
+            }
             case BATT_LEVEL_75:
             {
                 if(battPara.battVol < (BATT_VOL_75 - battErrVol))

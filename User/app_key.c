@@ -100,3 +100,8 @@ static void App_Hall_Handler(void *arg )
     Drv_Msg_Put(CMD_CASE, &caseState, 1);
 }
 
+uint8_t App_Key_Get_Hall_State(void )
+{
+    return Drv_Key_Get_Hall_State();
+}
+
