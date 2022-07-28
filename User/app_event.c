@@ -10,6 +10,9 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
+#include "hal_timer.h"
+#include "hal_battery.h"
+
 #include "drv_task.h"
 #include "drv_com.h"
 
@@ -24,6 +27,7 @@
 static void App_Event_Handler(void *arg );
 static void App_Event_Batt_Handler(uint8_t *buf, uint8_t length );
 /* Private variables ------------------------------------*/
+static uint8_t sysSleepState;
 
 void App_Event_Init(void )
 {
@@ -124,6 +128,7 @@ static void App_Event_Batt_Handler(uint8_t *buf, uint8_t length )
                     
                     if(App_Key_Get_Hall_State() == CASE_CLOSE)
                     {
+                        App_Sys_Sleep();
                     }
                 }
                 else
@@ -137,7 +142,9 @@ static void App_Event_Batt_Handler(uint8_t *buf, uint8_t length )
 }
 
 void App_Sys_Sleep(void )
-{
+{    
+    App_Sys_Set_Sleep_State(SYS_STATE_SLEEP);
+    
     App_Led_All_Off();
 
     CGC->PMUKEY = 0x192A;
@@ -145,12 +152,45 @@ void App_Sys_Sleep(void )
     CGC->PMUCTL = 1;
 
     __STOP(); 		// DeepSleep
+
+    //App_Sys_Delay_Ms(20);
+
+    App_Sys_Wakeup();
 }
 
 void App_Sys_Wakeup(void )
 {
-    Hal_Timer_Init();
-
     Hal_Batt_Init();
+    
+    Hal_Timer_Init();
+    
+    App_Sys_Set_Sleep_State(SYS_STATE_WAKEUP);
+}
+
+void App_Sys_Set_Sleep_State(uint8_t state )
+{
+    sysSleepState = state;
+}
+
+uint8_t App_Sys_Get_Sleep_State(void )
+{
+    return sysSleepState;
+}
+
+static uint16_t sysDelayCnt;
+
+void App_Sys_Delay_Count(void )
+{
+    if(sysDelayCnt > 0)
+    {
+        sysDelayCnt--;
+    }
+}
+
+void App_Sys_Delay_Ms(uint16_t ms )
+{
+    sysDelayCnt = ms;
+
+    while(sysDelayCnt > 0);
 }
 

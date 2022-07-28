@@ -13,6 +13,9 @@
 #include "hal_task.h"
 #include "hal_timer.h"
 #include "hal_key.h"
+
+
+#include "app_event.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
 /* Private macro ----------------------------------------*/
@@ -28,6 +31,8 @@ void IRQ04_Handler(void) __attribute__((alias("intp_3_interrupt")));
 void SysTick_Handler(void )
 {
     Hal_Task_IRQHandler();
+
+    App_Sys_Delay_Count();
 }
 
 void tm40_channel0_interrupt(void )
@@ -50,7 +55,7 @@ void intp_1_interrupt(void )
 void intp_2_interrupt(void )
 {
     INTC_ClearPendingIRQ(INTP2_IRQn);
-
+    
     Hal_Hall_Isr_Handler();
 }
 
@@ -60,5 +65,6 @@ void intp_3_interrupt(void )
     
     Hal_Key_Isr_Handler();
 }
+
 
 

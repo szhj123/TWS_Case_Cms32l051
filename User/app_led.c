@@ -112,7 +112,9 @@ void App_Led_Light_5S(void )
 
 static void App_Led_Light_5S_End_Callback(void *arg )
 {
-    App_Led_All_Off();
+    //App_Led_All_Off();
+
+    App_Sys_Sleep();
     
     App_Led_Flash_callback = NULL;
 }

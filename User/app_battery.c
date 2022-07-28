@@ -14,10 +14,19 @@
 #include "app_battery.h"
 #include "app_event.h"
 /* Private typedef --------------------------------------*/
-/* Private define ------------------ --------------------*/      
+/* Private define ------------------ --------------------*/     
+#define ADC_DET_COUNT                100  
+#define BATT_DETECT_TIME             100 //ms
+#define BATT_ERROR_VOL_REDUCE_TIME   5000 //ms
+#define BATT_ERROR_VOL_REDUCE_COUNT  (BATT_ERROR_VOL_REDUCE_TIME / BATT_DETECT_TIME)
+#define BATT_CHARGING_STEADY_TIME    2000 //ms
+#define BATT_CHARGING_STEADY_COUNT   (BATT_CHARGING_STEADY_TIME / BATT_DETECT_TIME)
+#define BATT_CHARGING_FULL_TIME      1800000//ms
+#define BATT_CHARGING_FULL_COUNT     (BATT_CHARGING_FULL_TIME / BATT_DETECT_TIME)
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 static void App_Batt_Handler(void *arg );
+static void App_Batt_Charging_Full_Detect(void );
 /* Private variables ------------------------------------*/
 batt_para_t battPara;
 
@@ -29,9 +38,7 @@ void App_Batt_Init(void )
 }
 
 static void App_Batt_Get_Para(uint8_t *adcSampleEndFlag )
-{
-    const static uint16_t ADC_DET_COUNT = 200;
-    
+{    
     static uint16_t adcSampleCnt;
     static uint32_t batVolSum;
     static uint32_t ntcVolSum;
@@ -181,7 +188,7 @@ static void App_Batt_Handler(void *arg )
                     }
                     else
                     {
-                        if(++battDelayCnt > 15)
+                        if(++battDelayCnt > BATT_CHARGING_STEADY_COUNT )
                         {
                             battPara.battErrVol =  battPara.battVol > battVolSave ? (battPara.battVol - battVolSave) : 0;
                             battDelayCnt = 0;
@@ -196,20 +203,8 @@ static void App_Batt_Handler(void *arg )
             {
                 if(adcSampleEndFlag)
                 {
-                    if(battPara.battVol >= 4200)
-                    {
-                        if(battPara.battErrVol > 0)
-                        {
-                            if(++battDelayCnt > 50)
-                            {
-                                battDelayCnt = 0;
+                    App_Batt_Charging_Full_Detect();
 
-                                battPara.battErrVol--;
-                            }
-                        }
-                    }
-
-                    
                     static uint16_t detectBattVol;
                     static uint16_t trueBattVol;
                     
@@ -245,19 +240,46 @@ static void App_Batt_Handler(void *arg )
     }
 }
 
-uint8_t App_Batt_Get_Level(void )
+static void App_Batt_Charging_Full_Detect(void )
 {
-    const uint8_t battErrVol = 50;//mv
-
-    if(Drv_Batt_Get_Usb_State())
+    static uint16_t battDelayCnt;
+        
+    if(App_Batt_Get_Level() != BATT_LEVEL_100)
     {
         if(Drv_Batt_Get_Charing_State())
         {
+            battDelayCnt = 0;
+            
             battPara.battLevel = BATT_LEVEL_100;
+        }
 
-            return battPara.battLevel;
+        if(battPara.battVol >= 4200)
+        {
+            if(battPara.battErrVol > 0)
+            {
+                if(++battDelayCnt > BATT_ERROR_VOL_REDUCE_COUNT)
+                {
+                    battDelayCnt = 0;
+
+                    battPara.battErrVol--;
+                }
+            }
+            else
+            {
+                if(++battDelayCnt > BATT_CHARGING_FULL_COUNT)
+                {
+                    battDelayCnt = 0;
+
+                    battPara.battLevel = BATT_LEVEL_100;
+                }
+            }
         }
     }
+}
+
+uint8_t App_Batt_Get_Level(void )
+{
+    const uint8_t battErrVol = 50;//mv
     
     if(battPara.battLevel == 0)
     {

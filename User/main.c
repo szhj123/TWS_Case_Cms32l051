@@ -42,7 +42,10 @@ int main(void )
     
 	while(1)
 	{
-        Drv_Task_Scheduler();
+        if(App_Sys_Get_Sleep_State() != SYS_STATE_SLEEP)
+        {
+            Drv_Task_Scheduler();
+        }
 	}
 	
 }
