@@ -14,7 +14,7 @@
 #define NTC_RES_42                  4905
 
 #define EARBUD_CUR_MAX_VALUE        300
-#define EARBUD_CUR_MIN_VALUE        10
+#define EARBUD_CUR_MIN_VALUE        12
 
 typedef enum 
 {

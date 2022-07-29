@@ -11,9 +11,6 @@
 #define KEY_TX       0x01
 #define KEY_NULL     0x00
 
-#define CASE_CLOSE   0
-#define CASE_OPEN    (!CASE_CLOSE)
-
 typedef enum 
 {
     KEY_STATE_INIT = 0,

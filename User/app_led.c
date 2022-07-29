@@ -11,9 +11,11 @@
 
 /* Includes ---------------------------------------------*/
 #include "drv_timer.h"
+
 #include "app_led.h"
 #include "app_battery.h"
-
+#include "app_event.h"
+#include "app_key.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
 /* Private macro ----------------------------------------*/
@@ -66,7 +68,8 @@ App_Led_Flash_callback_t App_Led_Flash_callback = NULL;
 
 static uint8_t ledSolidOnNum;
 static uint8_t ledFlashIndex;
-static uint8_t ledTimerId = TIMER_NULL;
+static uint8_t ledPairTimerId = TIMER_NULL;
+static uint8_t ledLight5STimerId = TIMER_NULL;
 
 void App_Led_Init(void )
 {
@@ -99,22 +102,30 @@ void App_Led_Light_5S(void )
     {
         return ;
     }
+    
+    App_Led_Batt_Discharing();
 
-    if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
-    {
-        App_Led_Batt_Discharing();
-         
-        Drv_Timer_Delete(ledTimerId);
+    Drv_Timer_Delete(ledLight5STimerId);
 
-        ledTimerId = Drv_Timer_Regist_Oneshot(App_Led_Light_5S_End_Callback, 5000, NULL);
-    }
+    ledLight5STimerId = Drv_Timer_Regist_Oneshot(App_Led_Light_5S_End_Callback, 5000, NULL);
 }
 
 static void App_Led_Light_5S_End_Callback(void *arg )
 {
-    //App_Led_All_Off();
-
-    App_Sys_Sleep();
+    if(App_Key_Get_Hall_State() == CASE_CLOSE)
+    {
+        if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
+        {
+            Drv_Msg_Put(CMD_SYS_SLEEP, NULL, 0);
+        }
+    }
+    else
+    {
+        if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
+        {
+            App_Led_All_Off();
+        }
+    }
     
     App_Led_Flash_callback = NULL;
 }
@@ -247,9 +258,9 @@ void App_Led_Earbud_Pair(void )
 
     App_Led_Flash_callback = App_Led_Flash_All;
 
-    Drv_Timer_Delete(ledTimerId);
+    Drv_Timer_Delete(ledPairTimerId);
 
-    ledTimerId = Drv_Timer_Regist_Oneshot(App_Led_Earbud_Pair_End_Callback, 5000, NULL);
+    ledPairTimerId = Drv_Timer_Regist_Oneshot(App_Led_Earbud_Pair_End_Callback, 5000, NULL);
 }
 
 static void App_Led_Earbud_Pair_End_Callback(void *arg )
@@ -260,7 +271,14 @@ static void App_Led_Earbud_Pair_End_Callback(void *arg )
     }
     else
     {
-        App_Led_Batt_Discharing();
+        if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
+        {
+            App_Led_Light_5S();
+        }
+        else
+        {
+            App_Led_Batt_Discharing();
+        }
     }
 }
 

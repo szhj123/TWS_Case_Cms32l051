@@ -34,9 +34,12 @@ void Drv_Msg_Put(uint8_t cmd, uint8_t *buf, uint8_t length )
     
     msgQueue.qBuf[msgQueue.rear].cmd = cmd;
 
-    for(i=0;i<length;i++)
+    if(buf != NULL)
     {
-        msgQueue.qBuf[msgQueue.rear].buf[i] = buf[i];
+        for(i=0;i<length;i++)
+        {
+            msgQueue.qBuf[msgQueue.rear].buf[i] = buf[i];
+        }
     }
 
     msgQueue.qBuf[msgQueue.rear].length = length;

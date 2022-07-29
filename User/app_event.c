@@ -76,6 +76,20 @@ static void App_Event_Handler(void *arg )
 
                     App_Led_Earbud_Pair();
                 }
+                else if(keyVal == (KEY_TX | KEY_DONW | KEY_UP))
+                {
+                    if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
+                    {
+                        App_Sys_Sleep();
+                    }
+                }
+
+                break;
+            }
+            case CMD_SYS_SLEEP:
+            {
+                App_Sys_Sleep();
+                break;
             }
             default: break;
         }
@@ -147,13 +161,19 @@ void App_Sys_Sleep(void )
     
     App_Led_All_Off();
 
+    Hal_Batt_Ntc_PwrOff();
+
+    Hal_Batt_Boost_Disable();
+
+    PORT_Init(PORT13, PIN7, PULLUP_INPUT);
+    PORT_Init(PORT4, PIN0, PULLUP_INPUT);
+
     CGC->PMUKEY = 0x192A;
     CGC->PMUKEY = 0x3E4F;
     CGC->PMUCTL = 1;
 
     __STOP(); 		// DeepSleep
 
-    //App_Sys_Delay_Ms(20);
 
     App_Sys_Wakeup();
 }
@@ -163,6 +183,10 @@ void App_Sys_Wakeup(void )
     Hal_Batt_Init();
     
     Hal_Timer_Init();
+
+    Hal_Batt_Ntc_PwrOn();
+
+    Hal_Batt_Boost_Enable();
     
     App_Sys_Set_Sleep_State(SYS_STATE_WAKEUP);
 }

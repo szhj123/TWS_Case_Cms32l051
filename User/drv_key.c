@@ -139,13 +139,6 @@ static uint8_t Drv_Key_Scan(void )
 
 uint8_t Drv_Key_Get_Hall_State(void )
 {
-    if(Hal_Key_Get_Hall_State())
-    {
-        return CASE_OPEN;
-    }
-    else
-    {
-        return CASE_CLOSE;
-    }
+    return Hal_Key_Get_Hall_State();
 }
 

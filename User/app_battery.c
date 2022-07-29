@@ -204,14 +204,9 @@ static void App_Batt_Handler(void *arg )
                 if(adcSampleEndFlag)
                 {
                     App_Batt_Charging_Full_Detect();
-
-                    static uint16_t detectBattVol;
-                    static uint16_t trueBattVol;
                     
-                    detectBattVol = battPara.battVol;
                     battPara.battVol -= battPara.battErrVol;
-                    trueBattVol = battPara.battVol;
-                    
+									
                     if(App_Batt_Get_Level() > tmpBattLevel)
                     {
                         tmpBattLevel = App_Batt_Get_Level();

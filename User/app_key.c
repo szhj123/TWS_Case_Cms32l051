@@ -56,10 +56,17 @@ static void App_Key_Detect(void *arg )
     
     Drv_Key_Detect(&keyVal);
 
+    if(keyVal != KEY_NULL)
+    {
+        Drv_Msg_Put(CMD_KEY, &keyVal, 1);
+    }
+
+    #if 0
     switch(keyVal)
     {
         case KEY_TX | KEY_DONW | KEY_UP:
         {
+            Drv_Msg_Put(CMD_KEY, &keyVal, 1);
             break;
         }
         case KEY_TX | KEY_LONG:
@@ -70,6 +77,7 @@ static void App_Key_Detect(void *arg )
         }
         default: break;
     }
+    #endif 
 
     if(keyVal & KEY_UP)
     {
@@ -102,6 +110,13 @@ static void App_Hall_Handler(void *arg )
 
 uint8_t App_Key_Get_Hall_State(void )
 {
-    return Drv_Key_Get_Hall_State();
+    if(Drv_Key_Get_Hall_State())
+    {
+        return CASE_OPEN;
+    }
+    else
+    {
+        return CASE_CLOSE;
+    }
 }
 

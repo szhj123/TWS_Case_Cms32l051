@@ -23,7 +23,7 @@ hal_irq_handler_callback_t Hal_Hall_Isr_Callback = NULL;
 
 void Hal_Key_Init(void )
 {
-    PORT_Init(PORT13, PIN6, PULLUP_INPUT);
+    PORT_Init(PORT13, PIN6, INPUT);
     INTP_Init(INTP2_HALL_DETECT, INTP_BOTH);
     INTP_Start(INTP2_HALL_DETECT);
 
