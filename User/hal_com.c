@@ -20,9 +20,7 @@
 
 void Hal_Com_Init(void )
 {
-    PORT_Init(PORT1, PIN2, INPUT);
-
-    PORT_Init(PORT12, PIN2, OUTPUT);
+    Cms32l051_Gpio_Init();
 }
 
 void Hal_Com_Tx_Enable(void )

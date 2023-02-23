@@ -2,6 +2,7 @@
 #define _APP_BATTERY_H
 
 #include "drv_battery.h"
+#include "drv_com.h"
 
 #define BATT_VOL_100                4200
 #define BATT_VOL_75                 3950

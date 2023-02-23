@@ -72,16 +72,15 @@ static void App_Event_Handler(void *arg )
 
                 if(keyVal == (KEY_TX | KEY_LONG))
                 {
-                    Drv_Com_Tx_Cmd(CMD_CASE_TWS_PAIRING);
-
+                    Drv_EarbudRst_Set_State(EARBUD_RESET_BUSY);
+                    
+                    Drv_Earbud_Reset();
+                    
                     App_Led_Earbud_Pair();
                 }
                 else if(keyVal == (KEY_TX | KEY_DONW | KEY_UP))
                 {
-                    if(App_Earbud_Get_State() == EARBUD_CHARGING_DONE)
-                    {
-                        App_Sys_Sleep();
-                    }
+                    Drv_Com_Tx_Cmd(CMD_TWS_FACTORY_TEST);
                 }
 
                 break;

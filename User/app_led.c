@@ -280,6 +280,8 @@ static void App_Led_Earbud_Pair_End_Callback(void *arg )
             App_Led_Batt_Discharing();
         }
     }
+
+    Drv_EarbudRst_Set_State(EARBUD_RESET_DONE);
 }
 
 void App_Led_Earbud_Charging_Done(void )

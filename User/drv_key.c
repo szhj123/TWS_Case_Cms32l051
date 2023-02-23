@@ -23,9 +23,9 @@ void Drv_Key_Init(void )
     Hal_Key_Init();    
 }
 
-void Drv_Key_Regist_Isr_Callback(hal_irq_handler_callback_t keyCallback,  hal_irq_handler_callback_t hallCallback )
+void Drv_Key_Regist_Isr_Callback(hal_irq_handler_callback_t hallCallback )
 {
-    Hal_Key_Reigst_Isr_Callback(keyCallback, hallCallback);
+    Hal_Key_Reigst_Isr_Callback(hallCallback);
 }
 
 void Drv_Key_Detect(uint8_t *keyVal )
@@ -52,6 +52,9 @@ void Drv_Key_Detect(uint8_t *keyVal )
 
                 keyState = KEY_STATE_SHORT_PRESS;
             }
+            
+            *keyVal = KEY_NULL;
+
             break;
         }
         case KEY_STATE_SHORT_PRESS:
@@ -102,6 +105,10 @@ void Drv_Key_Detect(uint8_t *keyVal )
             {
                 if(keyDelayCnt > 50)
                 {
+                    keySave = tmpKeyVal | KEY_CONT;
+
+                    *keyVal = keySave;
+                    
                     keyDelayCnt = 0;
                 }
             }

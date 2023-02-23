@@ -12,5 +12,11 @@
 
 typedef void (*hal_irq_handler_callback_t)(void );
 
+void Cms32l051_Gpio_Init(void );
+void Cms32l051_Intp_Init(void );
+void Cms32l051_Tim4_Channel0_Init(void );
+void Cms32l051_Adc_Init(void );
+
+
 #endif 
 

@@ -62,8 +62,6 @@ void intp_2_interrupt(void )
 void intp_3_interrupt(void )
 {
     INTC_ClearPendingIRQ(INTP3_IRQn);
-    
-    Hal_Key_Isr_Handler();
 }
 
 

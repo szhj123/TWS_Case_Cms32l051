@@ -21,7 +21,7 @@ typedef enum
 }key_state_t;
 
 void Drv_Key_Init(void );
-void Drv_Key_Regist_Isr_Callback(hal_irq_handler_callback_t keyCallback,  hal_irq_handler_callback_t hallCallback );
+void Drv_Key_Regist_Isr_Callback(hal_irq_handler_callback_t hallCallback );
 void Drv_Key_Detect(uint8_t *keyVal );
 uint8_t Drv_Key_Get_Hall_State(void );
 

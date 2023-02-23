@@ -19,26 +19,18 @@
 /* Private define ------------------ --------------------*/
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
-static void App_Key_Detect_Callback(void );
 static void App_Hall_Detect_Callback(void );
 static void App_Key_Detect(void *arg);
 static void App_Hall_Handler(void *arg );
 /* Private variables ------------------------------------*/
-static uint8_t keyTimerId = TIMER_NULL;
 
 void App_Key_Init(void )
 {
     Drv_Key_Init();    
 
-    Drv_Key_Regist_Isr_Callback(App_Key_Detect_Callback, App_Hall_Detect_Callback);
-}
+    Drv_Key_Regist_Isr_Callback(App_Hall_Detect_Callback);
 
-static void App_Key_Detect_Callback(void )
-{
-    if(keyTimerId == TIMER_NULL)
-    {
-       keyTimerId = Drv_Timer_Regist_Period(App_Key_Detect, 0, 1, NULL);
-    }
+    Drv_Timer_Regist_Period(App_Key_Detect, 0, 1, NULL);
 }
 
 static void App_Hall_Detect_Callback(void )
@@ -78,16 +70,6 @@ static void App_Key_Detect(void *arg )
         default: break;
     }
     #endif 
-
-    if(keyVal & KEY_UP)
-    {
-        if(keyTimerId != TIMER_NULL)
-        {
-            Drv_Timer_Delete(keyTimerId);
-
-            keyTimerId = TIMER_NULL;
-        }
-    }
 
     keyVal = KEY_NULL;
 }

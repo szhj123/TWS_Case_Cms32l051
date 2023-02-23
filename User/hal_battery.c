@@ -13,30 +13,15 @@
 #include "hal_battery.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
-#define INTP0_CHARGING_STATE                (1 << 0)
-#define INTP1_USB_DETECT                    (1 << 1)
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
 
 void Hal_Batt_Init(void )
 {
-    ADC_Init();
-    //initialize NTC power pin
-    PORT_Init(PORT2, PIN1, OUTPUT);
-    //initialize boost enbale pin
-    PORT_Init(PORT1, PIN0, OUTPUT);    
-    //initialize charging state pin
-    PORT_Init(PORT2, PIN3, PULLUP_INPUT);
-    INTP_Init(INTP0_CHARGING_STATE, INTP_BOTH);
-    INTP_Start(INTP0_CHARGING_STATE);
-    //initialize usb detect pin
-    PORT_Init(PORT12, PIN1, INPUT);
-    INTP_Init(INTP1_USB_DETECT, INTP_BOTH);
-    INTP_Start(INTP1_USB_DETECT);
+    Cms32l051_Adc_Init();        
 
-    //initialize UART_EN
-    PORT_Init(PORT12, PIN2, OUTPUT);
+    Cms32l051_Gpio_Init();
     
     Hal_Batt_Boost_Enable();
 

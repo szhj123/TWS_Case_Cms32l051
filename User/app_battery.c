@@ -378,8 +378,11 @@ void App_Batt_Send_Para(void )
     buf[2] = (uint8_t )battPara.ntcState;
     buf[3] = (uint8_t )battPara.curState;
     buf[4] = (uint8_t )battPara.earbudState;    
-    
-    Drv_Msg_Put(CMD_BATT, buf, sizeof(buf));
+
+    if(Drv_EarbudRst_Get_State() == EARBUD_RESET_DONE)
+    {
+        Drv_Msg_Put(CMD_BATT, buf, sizeof(buf));
+    }
 }
 
 
@@ -422,13 +425,20 @@ batt_cur_state_t App_Batt_Get_Cur_State(void )
 
 earbud_state_t App_Earbud_Get_State(void )
 {
-    if(battPara.earbudCur <= EARBUD_CUR_MIN_VALUE)
+    if(battPara.earbudState == EARBUD_CHARGING_PROCESS)
     {
-        battPara.earbudState = EARBUD_CHARGING_DONE;
+        if(battPara.earbudCur <= EARBUD_CUR_MIN_VALUE)
+        {
+            battPara.earbudState = EARBUD_CHARGING_DONE;
+        }
     }
-    else
+    else if(battPara.earbudState == EARBUD_CHARGING_DONE)
     {
-        battPara.earbudState = EARBUD_CHARGING_PROCESS;
+        if(battPara.earbudCur > (EARBUD_CUR_MIN_VALUE + 5))
+        {
+            battPara.earbudState = EARBUD_CHARGING_PROCESS;
+        }
+        
     }
     
     return battPara.earbudState;

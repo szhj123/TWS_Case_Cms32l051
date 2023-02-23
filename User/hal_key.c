@@ -13,23 +13,16 @@
 #include "hal_key.h"
 /* Private typedef --------------------------------------*/
 /* Private define ------------------ --------------------*/
-#define INTP2_HALL_DETECT                    (1 << 2)
-#define INTP3_KEY_DETECT                     (1 << 3)
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
-hal_irq_handler_callback_t Hal_Key_Isr_Callback = NULL;
 hal_irq_handler_callback_t Hal_Hall_Isr_Callback = NULL;
 
 void Hal_Key_Init(void )
 {
-    PORT_Init(PORT13, PIN6, INPUT);
-    INTP_Init(INTP2_HALL_DETECT, INTP_BOTH);
-    INTP_Start(INTP2_HALL_DETECT);
-
-    PORT_Init(PORT1, PIN1, PULLUP_INPUT);
-    INTP_Init(INTP3_KEY_DETECT, INTP_BOTH);
-    INTP_Start(INTP3_KEY_DETECT);
+    Cms32l051_Gpio_Init();
+    
+    Cms32l051_Intp_Init();
 }
 
 uint8_t Hal_Key_Get_Tx_State(void )
@@ -56,19 +49,9 @@ uint8_t Hal_Key_Get_Hall_State(void )
     }
 }
 
-void Hal_Key_Reigst_Isr_Callback(hal_irq_handler_callback_t keyCallback, hal_irq_handler_callback_t hallCallback )
+void Hal_Key_Reigst_Isr_Callback(hal_irq_handler_callback_t hallCallback )
 {
-    Hal_Key_Isr_Callback = keyCallback;
-
     Hal_Hall_Isr_Callback = hallCallback;
-}
-
-void Hal_Key_Isr_Handler(void )
-{
-    if(Hal_Key_Isr_Callback != NULL)
-    {
-        Hal_Key_Isr_Callback();
-    }
 }
 
 void Hal_Hall_Isr_Handler(void )

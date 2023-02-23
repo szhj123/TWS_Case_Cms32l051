@@ -2,6 +2,7 @@
 #define _APP_LED_H
 
 #include "drv_led.h"
+#include "drv_com.h"
 
 #define LED_FLASH_REGULAR_ON_TIME               500 //ms
 #define LED_FLASH_REGULAR_OFF_TIME              500 //ms
